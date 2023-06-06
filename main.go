@@ -36,7 +36,7 @@ import (
 var random *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 var seatingCapacity = 10
-var arrivalRate = 500
+var arrivalRate = 100
 var cutDuration = 1000 * time.Millisecond
 var timeOpen = 10 * time.Second
 
@@ -81,7 +81,7 @@ func main() {
 	}()
 
 	// add clients
-	i := 1
+	i := 0
 
 	go func() {
 		for {
@@ -91,8 +91,8 @@ func main() {
 			case <-shopClosing:
 				return
 			case <-time.After(time.Millisecond * time.Duration(randomMillseconds)):
-				shop.addClient(fmt.Sprintf("Client #%d", i))
 				i++
+				shop.addClient(fmt.Sprintf("Client #%d", i))
 			}
 		}
 	}()
@@ -101,4 +101,5 @@ func main() {
 	<-closed
 
 	fmt.Println("Total happy customers:", shop.TotalHappyCustomers)
+	fmt.Println("Total angry customers:", i-shop.TotalHappyCustomers)
 }
