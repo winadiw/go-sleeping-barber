@@ -9,9 +9,9 @@ import (
 
 var mx sync.Mutex
 
-type Barbershop struct {
+type BarberShop struct {
 	ShopCapacity        int
-	HaircutDuration     time.Duration
+	HairCutDuration     time.Duration
 	NumberOfBarbers     int
 	BarbersDoneChan     chan bool
 	ClientsChan         chan string
@@ -19,7 +19,7 @@ type Barbershop struct {
 	TotalHappyCustomers int
 }
 
-func (shop *Barbershop) addBarber(barber string) {
+func (shop *BarberShop) addBarber(barber string) {
 	shop.NumberOfBarbers++
 
 	// each barber has its own routine
@@ -52,21 +52,21 @@ func (shop *Barbershop) addBarber(barber string) {
 	}()
 }
 
-func (shop *Barbershop) cutHair(barber, client string) {
+func (shop *BarberShop) cutHair(barber, client string) {
 	color.Green("%s is cutting %s's hair!", barber, client)
-	time.Sleep(shop.HaircutDuration)
+	time.Sleep(shop.HairCutDuration)
 	color.Green("%s is finished cutting %s's hair.", barber, client)
 	mx.Lock()
 	shop.TotalHappyCustomers++
 	mx.Unlock()
 }
 
-func (shop *Barbershop) sendBarberHome(barber string) {
+func (shop *BarberShop) sendBarberHome(barber string) {
 	color.Cyan("%s is going home.", barber)
 	shop.BarbersDoneChan <- true
 }
 
-func (shop *Barbershop) closeShopForDay() {
+func (shop *BarberShop) closeShopForDay() {
 	color.Cyan("Closing shop for the day.")
 
 	close(shop.ClientsChan)
@@ -83,7 +83,7 @@ func (shop *Barbershop) closeShopForDay() {
 
 }
 
-func (shop *Barbershop) addClient(client string) {
+func (shop *BarberShop) addClient(client string) {
 	// prints out a message
 	color.Green("*** %s arrives!", client)
 

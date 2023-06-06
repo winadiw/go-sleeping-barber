@@ -50,14 +50,15 @@ func main() {
 	doneChan := make(chan bool)
 
 	// create the barbershop
-	shop := Barbershop{
+	shop := BarberShop{
 		ShopCapacity:    seatingCapacity,
-		HaircutDuration: cutDuration,
+		HairCutDuration: cutDuration,
 		NumberOfBarbers: 0,
 		ClientsChan:     clientChan,
 		BarbersDoneChan: doneChan,
 		Open:            true,
 	}
+
 	color.Green("The shop is open for the day!")
 
 	// add barbers
@@ -84,14 +85,12 @@ func main() {
 
 	go func() {
 		for {
-			// get a random number with average arrivalRate
-			randomMilli := random.Int() % (2 * arrivalRate)
-
+			// get a random number with average arrival rate
+			randomMillseconds := random.Int() % (2 * arrivalRate)
 			select {
 			case <-shopClosing:
 				return
-			case <-time.After(time.Duration(randomMilli) * time.Millisecond): //spawn rate
-				// when client arrives, call addClient
+			case <-time.After(time.Millisecond * time.Duration(randomMillseconds)):
 				shop.addClient(fmt.Sprintf("Client #%d", i))
 				i++
 			}
