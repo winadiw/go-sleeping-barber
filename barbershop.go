@@ -28,7 +28,7 @@ func (shop *BarberShop) addBarber(barber string) {
 		color.Yellow("%s goes to the waiting room to check for clients.", barber)
 
 		for {
-			// if there are no clients, barber sleep
+			// if there are no clients, the barber goes to sleep
 			if len(shop.ClientsChan) == 0 {
 				color.Yellow("There is nothing to do, so %s takes a nap.", barber)
 				isSleeping = true
@@ -38,13 +38,13 @@ func (shop *BarberShop) addBarber(barber string) {
 
 			if shopOpen {
 				if isSleeping {
-					color.Yellow("%s wakes %s up", client, barber)
+					color.Yellow("%s wakes %s up.", client, barber)
 					isSleeping = false
 				}
 				// cut hair
 				shop.cutHair(barber, client)
 			} else {
-				// shop is closed, send the barber home and close goroutine
+				// shop is closed, so send the barber home and close this goroutine
 				shop.sendBarberHome(barber)
 				return
 			}
@@ -53,7 +53,7 @@ func (shop *BarberShop) addBarber(barber string) {
 }
 
 func (shop *BarberShop) cutHair(barber, client string) {
-	color.Green("%s is cutting %s's hair!", barber, client)
+	color.Green("%s is cutting %s's hair.", barber, client)
 	time.Sleep(shop.HairCutDuration)
 	color.Green("%s is finished cutting %s's hair.", barber, client)
 	mx.Lock()
@@ -72,19 +72,18 @@ func (shop *BarberShop) closeShopForDay() {
 	close(shop.ClientsChan)
 	shop.Open = false
 
-	for a := 1; a < shop.NumberOfBarbers; a++ {
-		<-shop.BarbersDoneChan // block until all barbers are done
+	for a := 1; a <= shop.NumberOfBarbers; a++ {
+		<-shop.BarbersDoneChan //block until all barbers are done
 	}
 
 	close(shop.BarbersDoneChan)
 
 	color.Green("---------------------------------------------------------------------")
 	color.Green("The barbershop is now closed for the day, and everyone has gone home.")
-
 }
 
 func (shop *BarberShop) addClient(client string) {
-	// prints out a message
+	// print out a message
 	color.Green("*** %s arrives!", client)
 
 	if shop.Open {
@@ -92,9 +91,9 @@ func (shop *BarberShop) addClient(client string) {
 		case shop.ClientsChan <- client:
 			color.Yellow("%s takes a seat in the waiting room.", client)
 		default: //handles full buffered channels
-			color.Red("The waiting is room is full, so %s leaves.", client)
+			color.Red("The waiting room is full, so %s leaves.", client)
 		}
 	} else {
-		color.Red("The shop is already closed, so %s leaves", client)
+		color.Red("The shop is already closed, so %s leaves!", client)
 	}
 }
